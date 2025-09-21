@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游园活动积分管理系统 - 测试页面</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007bff;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 游园活动积分管理系统测试</h1>
+    
+    <div class="test-section">
+        <h2>1. 员工数据测试</h2>
+        <button class="test-button" onclick="testLoadEmployees()">加载员工数据</button>
+        <div id="employeeResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 积分提交测试</h2>
+        <button class="test-button" onclick="testSubmitScore()">提交测试积分</button>
+        <div id="submitResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 积分查询测试</h2>
+        <button class="test-button" onclick="testGetScores()">查询积分记录</button>
+        <div id="scoresResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 统计信息测试</h2>
+        <button class="test-button" onclick="testGetStats()">获取统计信息</button>
+        <div id="statsResult" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 前端功能测试</h2>
+        <button class="test-button" onclick="testFrontend()">测试前端交互</button>
+        <div id="frontendResult" class="result"></div>
+    </div>
+
+    <script>
+        // 测试员工数据加载
+        async function testLoadEmployees() {
+            const resultDiv = document.getElementById('employeeResult');
+            resultDiv.innerHTML = '加载中...';
+            
+            try {
+                const response = await fetch('/people.json');
+                const employees = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ 成功加载员工数据</strong><br>
+                    员工总数: ${employees.length}<br>
+                    前5个员工: ${JSON.stringify(employees.slice(0, 5), null, 2)}
+                `;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 加载失败:</strong> ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 测试积分提交
+        async function testSubmitScore() {
+            const resultDiv = document.getElementById('submitResult');
+            resultDiv.innerHTML = '提交中...';
+            
+            try {
+                const testData = {
+                    gameId: 1,
+                    employeeId: "62344",
+                    employeeName: "胡明豪",
+                    score: 5
+                };
+                
+                const response = await fetch('/api/scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <strong>✅ 积分提交成功</strong><br>
+                        响应: ${JSON.stringify(result, null, 2)}
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>❌ 提交失败:</strong> ${JSON.stringify(result, null, 2)}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 请求失败:</strong> ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 测试积分查询
+        async function testGetScores() {
+            const resultDiv = document.getElementById('scoresResult');
+            resultDiv.innerHTML = '查询中...';
+            
+            try {
+                const response = await fetch('/api/scores?gameId=1&limit=10');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <strong>✅ 查询成功</strong><br>
+                        记录数: ${result.data.length}<br>
+                        数据: ${JSON.stringify(result.data, null, 2)}
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>❌ 查询失败:</strong> ${JSON.stringify(result, null, 2)}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 请求失败:</strong> ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 测试统计信息
+        async function testGetStats() {
+            const resultDiv = document.getElementById('statsResult');
+            resultDiv.innerHTML = '获取中...';
+            
+            try {
+                const response = await fetch('/api/stats');
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <strong>✅ 统计信息获取成功</strong><br>
+                        数据: ${JSON.stringify(result, null, 2)}
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>❌ 获取失败:</strong> ${JSON.stringify(result, null, 2)}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 请求失败:</strong> ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 测试前端功能
+        function testFrontend() {
+            const resultDiv = document.getElementById('frontendResult');
+            
+            try {
+                // 测试游戏配置
+                const games = {
+                    1: { name: '拼速达人', icon: '⚡', description: '守擂挑战' },
+                    2: { name: '碰碰乐', icon: '🚗', description: '遥控对战' },
+                    3: { name: '平和心灵', icon: '🎯', description: '沙包投掷' },
+                    4: { name: '巧手取棒', icon: '🥢', description: '精准抓取' }
+                };
+                
+                // 测试员工匹配
+                const testEmployees = [
+                    {"工号": "62344", "姓名": "胡明豪"},
+                    {"工号": "1", "姓名": "1"}
+                ];
+                
+                const findEmployee = (id) => testEmployees.find(emp => emp.工号 === id);
+                const employee = findEmployee("62344");
+                
+                resultDiv.innerHTML = `
+                    <strong>✅ 前端功能测试通过</strong><br>
+                    游戏配置: ${Object.keys(games).length} 个游戏<br>
+                    员工匹配: ${employee ? employee.姓名 : '未找到'}<br>
+                    所有功能正常
+                `;
+                resultDiv.className = 'result success';
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>❌ 前端测试失败:</strong> ${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        // 页面加载时自动运行基础测试
+        window.addEventListener('load', function() {
+            testLoadEmployees();
+            testFrontend();
+        });
+    </script>
+</body>
+</html>

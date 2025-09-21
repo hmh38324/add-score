@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游园活动积分管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 游园活动积分管理系统</h1>
+            <p>选择游戏项目进行积分录入</p>
+        </header>
+
+        <div class="games-grid">
+            <div class="game-card" data-game="1">
+                <div class="game-icon">⚡</div>
+                <h3>拼速达人</h3>
+                <p>守擂挑战</p>
+            </div>
+            
+            <div class="game-card" data-game="2">
+                <div class="game-icon">🚗</div>
+                <h3>碰碰乐</h3>
+                <p>遥控对战</p>
+            </div>
+            
+            <div class="game-card" data-game="3">
+                <div class="game-icon">🎯</div>
+                <h3>平和心灵</h3>
+                <p>沙包投掷</p>
+            </div>
+            
+            <div class="game-card" data-game="4">
+                <div class="game-icon">🥢</div>
+                <h3>巧手取棒</h3>
+                <p>精准抓取</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 游戏积分弹窗 -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">游戏积分录入</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="employeeId">工号：</label>
+                    <input type="text" id="employeeId" placeholder="请输入工号" maxlength="10">
+                    <div id="employeeName" class="employee-name"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="score">积分：</label>
+                    <div class="score-input">
+                        <button type="button" id="scoreMinus" class="score-btn">-</button>
+                        <input type="number" id="score" value="1" min="1" max="20">
+                        <button type="button" id="scorePlus" class="score-btn">+</button>
+                    </div>
+                </div>
+                
+                <button type="button" id="submitScore" class="submit-btn">提交积分</button>
+                
+                <div class="history-section">
+                    <h3>提交历史</h3>
+                    <div id="scoreHistory" class="history-list">
+                        <!-- 历史记录将在这里动态加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载提示 -->
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>处理中...</p>
+    </div>
+
+    <!-- 消息提示 -->
+    <div id="message" class="message hidden"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
