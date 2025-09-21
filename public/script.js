@@ -22,6 +22,7 @@ const mainContent = document.getElementById('mainContent');
 const logoutBtn = document.getElementById('logoutBtn');
 
 // 设置相关DOM元素
+const leaderboardBtn = document.getElementById('leaderboardBtn');
 const settingsBtn = document.getElementById('settingsBtn');
 const settingsModal = document.getElementById('settingsModal');
 const closeSettingsBtn = document.getElementById('closeSettings');
@@ -146,6 +147,9 @@ function logout() {
 
 // 设置相关事件监听器
 function setupSettingsEventListeners() {
+    // 排行榜按钮
+    leaderboardBtn.addEventListener('click', openLeaderboard);
+    
     // 设置按钮
     settingsBtn.addEventListener('click', openSettingsModal);
     
@@ -197,6 +201,11 @@ function setupSettingsEventListeners() {
             confirmDeleteAll();
         }
     });
+}
+
+// 打开排行榜页面
+function openLeaderboard() {
+    window.open('leaderboard.html', '_blank');
 }
 
 // 打开设置弹窗
