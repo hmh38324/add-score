@@ -30,6 +30,8 @@ export default {
                 return await handleGetScores(request, env, corsHeaders);
             } else if (path.startsWith('/api/scores/') && method === 'DELETE') {
                 return await handleDeleteScore(request, env, corsHeaders);
+            } else if (path === '/api/scores/all' && method === 'DELETE') {
+                return await handleDeleteAllScores(request, env, corsHeaders);
             } else if (path === '/api/employees' && method === 'GET') {
                 return await handleGetEmployees(request, env, corsHeaders);
             } else if (path === '/api/stats' && method === 'GET') {
@@ -166,6 +168,52 @@ async function handleDeleteScore(request, env, corsHeaders) {
         console.error('Delete score error:', error);
         return new Response(JSON.stringify({ 
             error: 'Failed to delete score',
+            message: error.message 
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// 删除全部积分记录
+async function handleDeleteAllScores(request, env, corsHeaders) {
+    try {
+        const body = await request.json();
+        const { password } = body;
+
+        // 验证密码
+        if (password !== '1314520') {
+            return new Response(JSON.stringify({ 
+                error: 'Invalid password' 
+            }), {
+                status: 401,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // 删除所有记录
+        const result = await env.DB.prepare(`
+            DELETE FROM scores
+        `).run();
+
+        if (!result.success) {
+            throw new Error('Failed to delete all scores');
+        }
+
+        return new Response(JSON.stringify({ 
+            success: true,
+            message: 'All scores deleted successfully',
+            deletedCount: result.meta.changes
+        }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Delete all scores error:', error);
+        return new Response(JSON.stringify({ 
+            error: 'Failed to delete all scores',
             message: error.message 
         }), {
             status: 500,

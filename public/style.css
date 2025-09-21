@@ -129,11 +129,39 @@ header p {
     75% { transform: translateX(5px); }
 }
 
-/* 退出登录按钮 */
-.logout-btn {
+/* 头部按钮容器 */
+.header-buttons {
     position: absolute;
     top: 20px;
     right: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+/* 设置按钮 */
+.settings-btn {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(108, 117, 125, 0.3);
+}
+
+.settings-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+}
+
+.settings-btn:active {
+    transform: translateY(0);
+}
+
+/* 退出登录按钮 */
+.logout-btn {
     background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
@@ -585,6 +613,138 @@ header p {
     .swipe-hint {
         display: none;
     }
+    
+    /* 移动端头部按钮调整 */
+    .header-buttons {
+        position: relative;
+        top: auto;
+        right: auto;
+        justify-content: center;
+        margin: 15px 0;
+        flex-wrap: wrap;
+    }
+    
+    .settings-btn,
+    .logout-btn {
+        flex: 1;
+        min-width: 120px;
+    }
+    
+    /* 移动端删除确认弹窗调整 */
+    .delete-confirm-modal {
+        max-width: 95%;
+        margin: 15% auto;
+    }
+    
+    .delete-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .danger-btn,
+    .cancel-btn {
+        width: 100%;
+    }
+}
+
+/* 设置弹窗样式 */
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.danger-zone {
+    background: #fff5f5;
+    border: 2px solid #fed7d7;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.warning-text {
+    color: #e53e3e;
+    font-weight: 600;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.danger-btn {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(229, 62, 62, 0.3);
+}
+
+.danger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4);
+}
+
+.danger-btn:active {
+    transform: translateY(0);
+}
+
+/* 删除确认弹窗样式 */
+.delete-confirm-modal {
+    max-width: 500px;
+    margin: 10% auto;
+}
+
+.delete-warning {
+    background: #fff5f5;
+    border: 2px solid #fed7d7;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.delete-warning .warning-text {
+    margin-bottom: 10px;
+}
+
+.delete-warning .warning-text:last-child {
+    margin-bottom: 0;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(108, 117, 125, 0.3);
+}
+
+.cancel-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.4);
+}
+
+.cancel-btn:active {
+    transform: translateY(0);
 }
 
 /* 工具类 */

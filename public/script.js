@@ -8,6 +8,7 @@ const GAMES = {
 
 // 系统密码
 const SYSTEM_PASSWORD = '110';
+const DELETE_PASSWORD = '1314520';
 
 // 员工数据
 let employees = [];
@@ -19,6 +20,18 @@ const submitPasswordBtn = document.getElementById('submitPassword');
 const passwordError = document.getElementById('passwordError');
 const mainContent = document.getElementById('mainContent');
 const logoutBtn = document.getElementById('logoutBtn');
+
+// 设置相关DOM元素
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const closeSettingsBtn = document.getElementById('closeSettings');
+const deleteAllBtn = document.getElementById('deleteAllBtn');
+const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+const deletePassword1 = document.getElementById('deletePassword1');
+const deletePassword2 = document.getElementById('deletePassword2');
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+const deleteError = document.getElementById('deleteError');
 
 const modal = document.getElementById('gameModal');
 const modalTitle = document.getElementById('modalTitle');
@@ -51,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadEmployees();
     setupEventListeners();
     setupPasswordEventListeners();
+    setupSettingsEventListeners();
 });
 
 // 加载员工数据
@@ -128,6 +142,140 @@ function logout() {
     showPasswordModal();
     // 关闭游戏弹窗
     closeModal();
+}
+
+// 设置相关事件监听器
+function setupSettingsEventListeners() {
+    // 设置按钮
+    settingsBtn.addEventListener('click', openSettingsModal);
+    
+    // 关闭设置弹窗
+    closeSettingsBtn.addEventListener('click', closeSettingsModal);
+    settingsModal.addEventListener('click', function(e) {
+        if (e.target === settingsModal) {
+            closeSettingsModal();
+        }
+    });
+    
+    // 删除全部记录按钮
+    deleteAllBtn.addEventListener('click', openDeleteConfirmModal);
+    
+    // 删除确认弹窗
+    cancelDeleteBtn.addEventListener('click', closeDeleteConfirmModal);
+    deleteConfirmModal.addEventListener('click', function(e) {
+        if (e.target === deleteConfirmModal) {
+            closeDeleteConfirmModal();
+        }
+    });
+    
+    // 确认删除按钮
+    confirmDeleteBtn.addEventListener('click', confirmDeleteAll);
+    
+    // 密码输入框回车事件
+    deletePassword1.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            deletePassword2.focus();
+        }
+    });
+    
+    deletePassword2.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            confirmDeleteAll();
+        }
+    });
+}
+
+// 打开设置弹窗
+function openSettingsModal() {
+    settingsModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// 关闭设置弹窗
+function closeSettingsModal() {
+    settingsModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// 打开删除确认弹窗
+function openDeleteConfirmModal() {
+    closeSettingsModal();
+    deleteConfirmModal.style.display = 'block';
+    deletePassword1.value = '';
+    deletePassword2.value = '';
+    deleteError.classList.add('hidden');
+    deletePassword1.focus();
+}
+
+// 关闭删除确认弹窗
+function closeDeleteConfirmModal() {
+    deleteConfirmModal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// 确认删除全部记录
+async function confirmDeleteAll() {
+    const password1 = deletePassword1.value.trim();
+    const password2 = deletePassword2.value.trim();
+    
+    // 验证两次密码是否一致
+    if (password1 !== password2) {
+        deleteError.textContent = '两次输入的密码不一致';
+        deleteError.classList.remove('hidden');
+        deletePassword1.value = '';
+        deletePassword2.value = '';
+        deletePassword1.focus();
+        return;
+    }
+    
+    // 验证密码是否正确
+    if (password1 !== DELETE_PASSWORD) {
+        deleteError.textContent = '密码错误，请重新输入';
+        deleteError.classList.remove('hidden');
+        deletePassword1.value = '';
+        deletePassword2.value = '';
+        deletePassword1.focus();
+        return;
+    }
+    
+    // 显示加载状态
+    showLoading(true);
+    
+    try {
+        const response = await fetch(`${API_BASE}/scores/all`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                password: password1
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('删除失败');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage(`成功删除 ${result.deletedCount} 条记录！`, 'success');
+            closeDeleteConfirmModal();
+            
+            // 如果当前有打开的游戏弹窗，刷新历史记录
+            if (currentGame) {
+                loadScoreHistory(currentGame);
+            }
+        } else {
+            throw new Error(result.error || '删除失败');
+        }
+        
+    } catch (error) {
+        console.error('删除全部记录失败:', error);
+        showMessage('删除失败，请重试', 'error');
+    } finally {
+        showLoading(false);
+    }
 }
 
 // 设置事件监听器

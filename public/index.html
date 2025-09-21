@@ -31,7 +31,10 @@
         <header>
             <h1>🎮 游园活动积分管理系统</h1>
             <p>选择游戏项目进行积分录入</p>
-            <button id="logoutBtn" class="logout-btn">退出登录</button>
+            <div class="header-buttons">
+                <button id="settingsBtn" class="settings-btn">⚙️ 设置</button>
+                <button id="logoutBtn" class="logout-btn">退出登录</button>
+            </div>
         </header>
 
         <div class="games-grid">
@@ -57,6 +60,53 @@
                 <div class="game-icon">🥢</div>
                 <h3>巧手取棒</h3>
                 <p>精准抓取</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置弹窗 -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚙️ 系统设置</h2>
+                <span class="close" id="closeSettings">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h3>危险操作</h3>
+                    <div class="danger-zone">
+                        <p class="warning-text">⚠️ 以下操作将永久删除所有数据，请谨慎操作！</p>
+                        <button id="deleteAllBtn" class="danger-btn">🗑️ 删除全部记录</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content delete-confirm-modal">
+            <div class="modal-header">
+                <h2>⚠️ 确认删除全部记录</h2>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <p class="warning-text">此操作将永久删除所有积分记录，无法恢复！</p>
+                    <p class="warning-text">请输入密码进行二次确认：</p>
+                </div>
+                <div class="form-group">
+                    <label for="deletePassword1">第一次密码确认：</label>
+                    <input type="password" id="deletePassword1" placeholder="请输入密码" maxlength="10">
+                </div>
+                <div class="form-group">
+                    <label for="deletePassword2">第二次密码确认：</label>
+                    <input type="password" id="deletePassword2" placeholder="请再次输入密码" maxlength="10">
+                </div>
+                <div class="delete-actions">
+                    <button id="confirmDeleteBtn" class="danger-btn">确认删除</button>
+                    <button id="cancelDeleteBtn" class="cancel-btn">取消</button>
+                </div>
+                <div id="deleteError" class="password-error hidden">密码错误，请重新输入</div>
             </div>
         </div>
     </div>
