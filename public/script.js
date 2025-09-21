@@ -6,10 +6,20 @@ const GAMES = {
     4: { name: '巧手取棒', icon: '🥢', description: '精准抓取' }
 };
 
+// 系统密码
+const SYSTEM_PASSWORD = '110';
+
 // 员工数据
 let employees = [];
 
 // DOM 元素
+const passwordModal = document.getElementById('passwordModal');
+const passwordInput = document.getElementById('passwordInput');
+const submitPasswordBtn = document.getElementById('submitPassword');
+const passwordError = document.getElementById('passwordError');
+const mainContent = document.getElementById('mainContent');
+const logoutBtn = document.getElementById('logoutBtn');
+
 const modal = document.getElementById('gameModal');
 const modalTitle = document.getElementById('modalTitle');
 const employeeIdInput = document.getElementById('employeeId');
@@ -31,8 +41,16 @@ const API_BASE = 'https://addscoreapi.biboran.top/api';
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否已经登录
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+        showMainContent();
+    } else {
+        showPasswordModal();
+    }
+    
     loadEmployees();
     setupEventListeners();
+    setupPasswordEventListeners();
 });
 
 // 加载员工数据
@@ -54,6 +72,62 @@ async function loadEmployees() {
             {"工号": "2", "姓名": "测试用户2"}
         ];
     }
+}
+
+// 密码验证相关函数
+function showPasswordModal() {
+    passwordModal.style.display = 'block';
+    mainContent.classList.add('hidden');
+    passwordInput.focus();
+}
+
+function showMainContent() {
+    passwordModal.style.display = 'none';
+    mainContent.classList.remove('hidden');
+}
+
+function setupPasswordEventListeners() {
+    // 密码提交按钮
+    submitPasswordBtn.addEventListener('click', verifyPassword);
+    
+    // 密码输入框回车事件
+    passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            verifyPassword();
+        }
+    });
+    
+    // 退出登录按钮
+    logoutBtn.addEventListener('click', logout);
+}
+
+function verifyPassword() {
+    const inputPassword = passwordInput.value.trim();
+    
+    if (inputPassword === SYSTEM_PASSWORD) {
+        // 密码正确
+        localStorage.setItem('isAuthenticated', 'true');
+        showMainContent();
+        passwordInput.value = '';
+        passwordError.classList.add('hidden');
+    } else {
+        // 密码错误
+        passwordError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+        
+        // 3秒后隐藏错误信息
+        setTimeout(() => {
+            passwordError.classList.add('hidden');
+        }, 3000);
+    }
+}
+
+function logout() {
+    localStorage.removeItem('isAuthenticated');
+    showPasswordModal();
+    // 关闭游戏弹窗
+    closeModal();
 }
 
 // 设置事件监听器
