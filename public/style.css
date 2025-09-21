@@ -315,6 +315,13 @@ header p {
     font-size: 1.2rem;
 }
 
+.swipe-hint {
+    color: #999;
+    font-size: 0.9rem;
+    font-weight: normal;
+    font-style: italic;
+}
+
 .history-list {
     max-height: 300px;
     overflow-y: auto;
@@ -572,6 +579,11 @@ header p {
         width: 100px;
         margin-left: auto;
         margin-right: auto;
+    }
+    
+    /* 移动端隐藏左滑提示 */
+    .swipe-hint {
+        display: none;
     }
 }
 
