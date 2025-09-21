@@ -17,5 +17,23 @@ id = "67da8583a16f4fb8b39cd51f9f4dc089"
 [env.production]
 name = "rankinglist-api-prod"
 
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "rankinglist-new"
+database_id = "6d162793-9bc4-41f3-b414-3c1bc37532d0"
+
+[[env.production.kv_namespaces]]
+binding = "KV"
+id = "67da8583a16f4fb8b39cd51f9f4dc089"
+
 [env.staging]
 name = "rankinglist-api-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "rankinglist-new"
+database_id = "6d162793-9bc4-41f3-b414-3c1bc37532d0"
+
+[[env.staging.kv_namespaces]]
+binding = "KV"
+id = "67da8583a16f4fb8b39cd51f9f4dc089"
