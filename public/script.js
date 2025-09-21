@@ -50,7 +50,7 @@ const message = document.getElementById('message');
 let currentGame = null;
 
 // API 基础 URL
-const API_BASE = 'https://addscoreapi.biboran.top/api';
+const API_BASE = 'https://rankinglist-api-prod.hmh38324.workers.dev/api';
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
