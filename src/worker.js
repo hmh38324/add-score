@@ -24,18 +24,14 @@ export default {
 
         try {
             // 路由处理
-            console.log(`Request: ${method} ${path}`);
-            
             if (path === '/api/scores' && method === 'POST') {
                 return await handleSubmitScore(request, env, corsHeaders);
             } else if (path === '/api/scores' && method === 'GET') {
                 return await handleGetScores(request, env, corsHeaders);
-            } else if (path === '/api/scores/all' && method === 'DELETE') {
-                console.log('Matched delete all scores route');
-                return await handleDeleteAllScores(request, env, corsHeaders);
-            } else if (path.startsWith('/api/scores/') && path !== '/api/scores/all' && method === 'DELETE') {
-                console.log('Matched delete single score route');
+            } else if (path.startsWith('/api/scores/') && method === 'DELETE') {
                 return await handleDeleteScore(request, env, corsHeaders);
+            } else if (path === '/api/scores/all' && method === 'DELETE') {
+                return await handleDeleteAllScores(request, env, corsHeaders);
             } else if (path === '/api/employees' && method === 'GET') {
                 return await handleGetEmployees(request, env, corsHeaders);
             } else if (path === '/api/stats' && method === 'GET') {
