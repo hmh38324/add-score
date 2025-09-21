@@ -42,7 +42,7 @@ const scoreMinusBtn = document.getElementById('scoreMinus');
 const scorePlusBtn = document.getElementById('scorePlus');
 const submitBtn = document.getElementById('submitScore');
 const scoreHistory = document.getElementById('scoreHistory');
-const closeBtn = document.querySelector('.close');
+const closeBtn = document.getElementById('closeGameModal');
 const loading = document.getElementById('loading');
 const message = document.getElementById('message');
 
@@ -154,6 +154,20 @@ function setupSettingsEventListeners() {
     settingsModal.addEventListener('click', function(e) {
         if (e.target === settingsModal) {
             closeSettingsModal();
+        }
+    });
+    
+    // 密码弹窗点击外部关闭
+    passwordModal.addEventListener('click', function(e) {
+        if (e.target === passwordModal) {
+            // 密码弹窗不允许点击外部关闭，必须输入正确密码
+        }
+    });
+    
+    // 删除确认弹窗点击外部关闭
+    deleteConfirmModal.addEventListener('click', function(e) {
+        if (e.target === deleteConfirmModal) {
+            closeDeleteConfirmModal();
         }
     });
     
@@ -343,8 +357,20 @@ function setupEventListeners() {
 
     // ESC 键关闭弹窗
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-            closeModal();
+        if (e.key === 'Escape') {
+            // 关闭游戏弹窗
+            if (modal.style.display === 'block') {
+                closeModal();
+            }
+            // 关闭设置弹窗
+            else if (settingsModal.style.display === 'block') {
+                closeSettingsModal();
+            }
+            // 关闭删除确认弹窗
+            else if (deleteConfirmModal.style.display === 'block') {
+                closeDeleteConfirmModal();
+            }
+            // 密码弹窗不允许ESC关闭
         }
     });
 }
