@@ -2,7 +2,7 @@
 const GAMES = {
     1: { name: '拼速达人', icon: '⚡', description: '守擂挑战' },
     2: { name: '碰碰乐', icon: '🚗', description: '遥控对战' },
-    3: { name: '平和心灵', icon: '🎯', description: '沙包投掷' },
+    3: { name: '沙包投掷', icon: '🎯', description: '精准投掷' },
     4: { name: '巧手取棒', icon: '🥢', description: '精准抓取' }
 };
 
