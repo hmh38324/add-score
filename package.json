@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --env production",
+    "deploy:staging": "wrangler deploy --env staging",
+    "deploy:all": "./deploy-production.sh",
     "pages:dev": "wrangler pages dev",
-    "pages:deploy": "wrangler pages deploy"
+    "pages:deploy": "wrangler pages deploy public --project-name=rankinglist-frontend --branch production"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20231218.0",
