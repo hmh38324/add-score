@@ -44,3 +44,4 @@ curl -X GET "https://addscoreapi.biboran.top/api/scores?gameId=1"
 - **自定义域名**：https://addscore.biboran.top（可能需要等待传播）
 - **API接口**：https://addscoreapi.biboran.top
 
+
