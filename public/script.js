@@ -27,7 +27,7 @@ const message = document.getElementById('message');
 let currentGame = null;
 
 // API 基础 URL
-const API_BASE = 'https://rankinglist-api.hmh38324.workers.dev/api';
+const API_BASE = 'https://addscoreapi.biboran.top/api';
 
 // 初始化
 document.addEventListener('DOMContentLoaded', function() {
@@ -251,17 +251,33 @@ function displayScoreHistory(history) {
     }
     
     try {
-        scoreHistory.innerHTML = history.map(record => `
-            <div class="history-item">
-                <div class="history-info">
-                    <div class="history-name">${record.employeeName || '未知'} (${record.employeeId || 'N/A'})</div>
-                    <div class="history-details">
-                        ${record.createdAt ? new Date(record.createdAt).toLocaleString('zh-CN') : '未知时间'}
+        scoreHistory.innerHTML = history.map((record, index) => {
+            console.log(`记录 ${index}:`, record);
+            console.log(`员工姓名: ${record.employee_name}, 员工ID: ${record.employee_id}, 创建时间: ${record.created_at}`);
+            
+            return `
+                <div class="history-item" data-id="${record.id}">
+                    <div class="history-content">
+                        <div class="history-info">
+                            <div class="history-name">${record.employee_name || '未知'} (${record.employee_id || 'N/A'})</div>
+                            <div class="history-details">
+                                ${record.created_at ? new Date(record.created_at).toLocaleString('zh-CN') : '未知时间'}
+                            </div>
+                        </div>
+                        <div class="history-score">+${record.score || 0}分</div>
+                    </div>
+                    <div class="delete-action">
+                        <button class="delete-btn" onclick="deleteScore(${record.id})">
+                            <span class="delete-icon">🗑️</span>
+                            <span class="delete-text">删除</span>
+                        </button>
                     </div>
                 </div>
-                <div class="history-score">+${record.score || 0}分</div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+        
+        // 添加触摸事件监听器
+        addSwipeListeners();
     } catch (error) {
         console.error('渲染历史记录失败:', error);
         scoreHistory.innerHTML = '<p style="color: #dc3545; text-align: center;">渲染失败</p>';
@@ -286,6 +302,132 @@ function showMessage(text, type = 'success') {
     setTimeout(() => {
         message.classList.add('hidden');
     }, 3000);
+}
+
+// 删除积分记录
+async function deleteScore(scoreId) {
+    if (!confirm('确定要删除这条积分记录吗？此操作不可撤销。')) {
+        return;
+    }
+    
+    showLoading(true);
+    
+    try {
+        const response = await fetch(`${API_BASE}/scores/${scoreId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('删除失败');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('记录删除成功！', 'success');
+            // 刷新历史记录
+            loadScoreHistory(currentGame);
+        } else {
+            throw new Error(result.error || '删除失败');
+        }
+        
+    } catch (error) {
+        console.error('删除记录失败:', error);
+        showMessage('删除失败，请重试', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
+
+// 添加触摸事件监听器
+function addSwipeListeners() {
+    const historyItems = document.querySelectorAll('.history-item');
+    
+    historyItems.forEach(item => {
+        let startX = 0;
+        let startY = 0;
+        let currentX = 0;
+        let isDragging = false;
+        let hasMoved = false;
+        
+        // 触摸开始
+        item.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isDragging = true;
+            hasMoved = false;
+            item.style.transition = 'none';
+        });
+        
+        // 触摸移动
+        item.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            currentX = e.touches[0].clientX;
+            const deltaX = currentX - startX;
+            const deltaY = e.touches[0].clientY - startY;
+            
+            // 如果垂直滑动距离大于水平滑动距离，不处理
+            if (Math.abs(deltaY) > Math.abs(deltaX)) {
+                return;
+            }
+            
+            hasMoved = true;
+            
+            // 只允许向左滑动
+            if (deltaX < 0) {
+                const translateX = Math.max(deltaX, -80); // 最大滑动80px
+                item.style.transform = `translateX(${translateX}px)`;
+                
+                // 显示删除按钮
+                const deleteAction = item.querySelector('.delete-action');
+                if (deleteAction) {
+                    const opacity = Math.min(Math.abs(deltaX) / 80, 1);
+                    deleteAction.style.opacity = opacity;
+                }
+            }
+        });
+        
+        // 触摸结束
+        item.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            item.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+            
+            const deltaX = currentX - startX;
+            
+            if (hasMoved && deltaX < -40) {
+                // 滑动超过40px，显示删除按钮
+                item.style.transform = 'translateX(-80px)';
+                const deleteAction = item.querySelector('.delete-action');
+                if (deleteAction) {
+                    deleteAction.style.opacity = '1';
+                }
+            } else {
+                // 滑动不足或向右滑动，恢复原状
+                item.style.transform = 'translateX(0)';
+                const deleteAction = item.querySelector('.delete-action');
+                if (deleteAction) {
+                    deleteAction.style.opacity = '0';
+                }
+            }
+        });
+        
+        // 点击恢复
+        item.addEventListener('click', (e) => {
+            if (e.target.closest('.delete-btn')) return;
+            
+            item.style.transform = 'translateX(0)';
+            const deleteAction = item.querySelector('.delete-action');
+            if (deleteAction) {
+                deleteAction.style.opacity = '0';
+            }
+        });
+    });
 }
 
 // 工具函数：防抖

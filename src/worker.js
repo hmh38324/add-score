@@ -28,6 +28,8 @@ export default {
                 return await handleSubmitScore(request, env, corsHeaders);
             } else if (path === '/api/scores' && method === 'GET') {
                 return await handleGetScores(request, env, corsHeaders);
+            } else if (path.startsWith('/api/scores/') && method === 'DELETE') {
+                return await handleDeleteScore(request, env, corsHeaders);
             } else if (path === '/api/employees' && method === 'GET') {
                 return await handleGetEmployees(request, env, corsHeaders);
             } else if (path === '/api/stats' && method === 'GET') {
@@ -105,6 +107,65 @@ async function handleSubmitScore(request, env, corsHeaders) {
         console.error('Submit score error:', error);
         return new Response(JSON.stringify({ 
             error: 'Failed to submit score',
+            message: error.message 
+        }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// 删除积分记录
+async function handleDeleteScore(request, env, corsHeaders) {
+    try {
+        const url = new URL(request.url);
+        const pathParts = url.pathname.split('/');
+        const scoreId = pathParts[pathParts.length - 1];
+
+        if (!scoreId || isNaN(scoreId)) {
+            return new Response(JSON.stringify({ 
+                error: 'Invalid score ID' 
+            }), {
+                status: 400,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // 检查记录是否存在
+        const existingRecord = await env.DB.prepare(`
+            SELECT * FROM scores WHERE id = ?
+        `).bind(scoreId).first();
+
+        if (!existingRecord) {
+            return new Response(JSON.stringify({ 
+                error: 'Score record not found' 
+            }), {
+                status: 404,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+            });
+        }
+
+        // 删除记录
+        const result = await env.DB.prepare(`
+            DELETE FROM scores WHERE id = ?
+        `).bind(scoreId).run();
+
+        if (!result.success) {
+            throw new Error('Failed to delete score');
+        }
+
+        return new Response(JSON.stringify({ 
+            success: true,
+            message: 'Score deleted successfully'
+        }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+
+    } catch (error) {
+        console.error('Delete score error:', error);
+        return new Response(JSON.stringify({ 
+            error: 'Failed to delete score',
             message: error.message 
         }), {
             status: 500,
